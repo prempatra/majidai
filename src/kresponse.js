@@ -122,7 +122,7 @@ class Kresponse {
 
         }
 
-        this.send404Response();
+        this.respondErr(404);
     }
 
     respondErr(...args) {
