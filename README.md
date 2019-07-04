@@ -1,6 +1,6 @@
 # majidai
 A simple and light web framework for nodejs  
-with less then 30KB.  
+with less then 30KB(npm install).  
 No extra libraries are required.  
 
 ※日本語の場合は、画面の下の部分までスクロールしてください。
@@ -122,7 +122,7 @@ Open Browser and access to access to http://localhost:8000/
 # 日本語
 nodejs用のシンプルかつ軽量なWebフレームワークです。  
 NODEの標準環境で動作するため、ほかのライブラリーが不要です。  
-30KB以下ですのでとても軽いです。
+30KB以下ですのでとても軽いです(npm経由でインストールした場合)。
 
 #### インストール
 ```
