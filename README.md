@@ -100,7 +100,7 @@ Please refer to following link for general usage of majidai. File name will repr
 https://github.com/dakc/majidai/tree/master/example
 
 ## 5. Docker
-Create container with name majidai and run on background.
+Create container with name majidai and run on interactive mode.
 ```
 docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 ```

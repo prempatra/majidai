@@ -80,8 +80,8 @@ class Khttp {
                 }
             });
 
-            let server = http.createServer((req, resp) => this.handle(req, resp));
-            server.listen(this._config.port, this._config.host);
+            this._server = http.createServer((req, resp) => this.handle(req, resp));
+            this._server.listen(this._config.port, this._config.host);
             this._logger.debug(`Server Listening at http://${this._config.host}:${this._config.port}`);
             // remove timeout session data every hour
             setInterval(() => {
@@ -94,6 +94,12 @@ class Khttp {
         } catch (err) {
             throw err;
         }
+    }
+
+    stop() {
+        this._server.close();
+        this._logger.debug("Server Stopped Listening.");
+        process.exit(0);
     }
 
     isSecure(filePath) {
