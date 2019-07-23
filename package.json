@@ -1,0 +1,35 @@
+{
+  "name": "majidai",
+  "version": "1.0.5-rc.21",
+  "description": "A simple and light weight web framework for nodejs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "webpack --mode production",
+    "test": "mocha test/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dakc/majidai.git"
+  },
+  "keywords": [
+    "web server",
+    "nodejs web framework"
+  ],
+  "author": "dakc<dakc@outlook.jp>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dakc/majidai/issues"
+  },
+  "homepage": "https://dakc.github.io/majidai.html",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "formidable": "^1.2.1",
+    "mocha": "^6.1.4",
+    "needle": "^2.4.0",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5",
+    "webpack-node-externals": "^1.7.2"
+  }
+}
