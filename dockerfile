@@ -24,4 +24,4 @@ RUN git checkout refs/tags/docker -- example
 WORKDIR /data/example
 
 # run nodejs
-ENTRYPOINT ["node", "sample.js"]
+ENTRYPOINT ["node", "index.js"]

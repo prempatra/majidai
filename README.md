@@ -107,9 +107,8 @@ docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 Open Browser and access to access to http://localhost:8000/
 
 ## TODO
-① Unit testing  
-② https, http/2 support  
-③ support for other http methods like PUT,DELETE,etc  
+- https, http/2 support  
+- support for other http methods like PUT,DELETE,etc  
 
 # Documentaion - https://dakc.github.io/majidai.html
 
@@ -269,7 +268,6 @@ docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 https://dakc.github.io/majidai.html <-- 英語のみです。ごめんなさい。
 
 ### Todos
- - UNIT TESTING  
  - HTTPS,HTTP/2の対応  
  - ほかのHTTPメソッド（PUT、DELETE）の対応  
 
