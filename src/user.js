@@ -141,12 +141,35 @@ module.exports = function (sessObj, logger, reqResp) {
             userAgent: () => reqResp.userAgent(),
             referrer: () => reqResp.referrer(),
             url: () => reqResp.url(),
-            getCookie: () => reqResp.getCookie(),
+            getCookie: (key) => {
+                var cookie = reqResp.getCookie();
+                if (!key) {
+                    var dt = {};
+                    cookie.forEach((value, key) => dt[key] = value);
+                    return dt;
+                }
+                return cookie.has(key) ? cookie.get(key) : "";
+            },
             method: () => reqResp.method(),
             headers: (key) => {
                 if (!key) return reqResp.request.headers;
                 if (reqResp.request.headers.hasOwnProperty(key)) return reqResp.request.headers[key];
                 return "";
+            },
+            addCookie: (...args) => {
+                var key, val, domain, path, expireDate, httpOnly, secure;
+                if (args.length === 1 && typeof args[0] == "object") {
+                    if (args[0].hasOwnProperty("key") && args[0].hasOwnProperty("value")) {
+                        reqResp.addCookie(args[0]);
+                        return true;
+                    }
+                    
+                }else if (args.length === 2 && typeof args[0] == "string" && typeof args[1] == "string") {
+                    reqResp.addCookie({ key: args[0], value: args[1] });
+                    return true;
+                }
+                
+                return false
             }
         }
     });

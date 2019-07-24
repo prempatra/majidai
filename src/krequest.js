@@ -44,6 +44,7 @@ class Krequest extends Kresponse {
      */
     getCookie(key) {
         var m = this.parseCookie();
+        if (!key || key == undefined) return m;
         return m.has(key) ? m.get(key) : "";
     }
 

@@ -50,12 +50,22 @@ class Kresponse {
         this.response.setHeader('Set-Cookie', [`${key}=${value}; HttpOnly; Path=/; expires=${new Date().addYears(1)}`]);
     }
 
+    addCookie(dt) {
+        var newCookie = `${dt.key}=${dt.value};` +
+            (dt.hasOwnProperty("httpOnly") && dt.httpOnly ? " HttpOnly;" : "") +
+            (dt.hasOwnProperty("secure") && dt.secure ? " Secure;" : "") +
+            (dt.hasOwnProperty("path") ? ` Path=${dt.path};` : "") +
+            (dt.hasOwnProperty("domain") ? ` Domain=${dt.domain};` : "") +
+            (dt.hasOwnProperty("expireDate") ? ` Expires=${dt.expireDate};` : "");
+        this.response.getHeader("Set-Cookie") || this.response.setHeader('Set-Cookie',[]);
+        this.response.getHeader("Set-Cookie").push(newCookie);
+    }
      /**
      * deletes the cookie from response
      * @param {string} key - name of the cookie
      */
     deleteCookie(key) {
-        this.response.setHeader('Set-Cookie', [`${key}=; HttpOnly; Path=/; expires=${new Date(0)}`]);
+        this.response.setHeader('Set-Cookie', [`${key}=; expires=${new Date(0)}`]);
     }
 
 
