@@ -1,12 +1,16 @@
 {
   "name": "majidai",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "authentication.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node authentication.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "formidable": "^1.2.1",
+    "majidai": "latest"
+  }
 }

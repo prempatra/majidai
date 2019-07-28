@@ -1,9 +1,9 @@
 # majidai
 A simple and light web framework for nodejs  
-with less then 30KB(npm install).  
+with less then 50KB(npm install).  
 No extra libraries are required.  
 
-※日本語の場合は、画面の下の部分までスクロールしてください。
+※日本語の場合は、[画面の下の部分までスクロールしてください](#日本語)。
 
 [![Build Status](https://travis-ci.com/dakc/majidai.svg?branch=develop)](https://travis-ci.com/dakc/majidai)
 [![npm](https://img.shields.io/npm/v/majidai.svg)](https://www.npmjs.com/package/majidai) 
@@ -131,7 +131,7 @@ Open Browser and access to access to http://localhost:8000/
 # 日本語
 nodejs用のシンプルかつ軽量なWebフレームワークです。  
 NODEの標準環境で動作するため、ほかのライブラリーが不要です。  
-30KB以下ですのでとても軽いです(npm経由でインストールした場合)。
+50KB以下ですのでとても軽いです(npm経由でインストールした場合)。
 
 #### インストール
 ```
@@ -157,8 +157,10 @@ server.METHOD("ROUTING", function (app) {
 // 受付開始
 server.start();
 ```
-METHODをgetまたはpostに変更します。  
+METHODをgetまたはpostに変更します。
+&nbsp;  
 ROUTINGを適切なパスに変更します。
+&nbsp;  
 [書き方については、「2. start」を参考にしてください。](#2-start)
 
 ##### パラメータ付きルーティング
@@ -175,28 +177,27 @@ server.get("/books/{year}/{price}", function (app) {
 });
 ```
 ##### エラー処理のカスタマイズ
+引数で受けたオブジェクトの中身が以下のようになっています。
 ```
-// 受け取った引数の中身を変えて変えすだけです
+errObj = {
+    contentType:　現在設定してあるcontent-type(text/html,text/plain),
+    errCode: エラーコード(404,500.,,),
+    errMsg: エラー内容
+}
+```
+受け取った引数の中身を変えて変えすだけです。
+```
 server.onError(function (errObj) {
 
     //  管理者にメールで通知するなどの処理
+    // ..
     // ..
 
     // content-typeをtext/htmlにする
     errObj.contentType = "text/html";
     
     // エラー内容を以下のようにHTML文章にする
-    errObj.errMsg = `
-    <html>
-    <head>
-    <title>custom error</title>
-    </head>
-    <body>
-        <h1><span style='color:#ff0000'>Woops!</span> Something Went Wrong</h1>
-        <p>${errObj.errMsg}</p>
-    </body>
-    </html>
-    `;
+    errObj.errMsg = "<h1>" + errObj.errMsg + "</h1>";
     
     // 中身を変えた引数を返す
     return errObj;

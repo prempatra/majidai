@@ -60,8 +60,8 @@ server.get("/home", function (app) {
 
     // below here for authorized user
     //  get data from session
-    var sessionData = app.session.get();
-    return "Hello Authorized user " + sessionData.user_id;
+    var dt = "<pre>" + JSON.stringify(app.session.get(), null, 4) + "</pre><br><a href='/logout'>logout</a>";
+    return app.respond.html(dt);
 });
 
 // 4. clear the user data

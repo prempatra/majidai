@@ -16,14 +16,22 @@ const customConfig = {
     // log
     log: {
         // activate access log
-        // write every access infomation to log file
+        // write every access infomation to log file in format(yyyy-mm-dd.access)
+        // general logs will be written in app.log
         isWriteAccess: true,
         // folder to log
         folder: "./myfolder",
     },
     // change the server name
     header: {
-        server: "majidai_server_test",
+        // deny iframe
+        "x-frame-options": "DENY",
+        // disable xss protection
+        "x-xss-protection": "0",
+        // set server name
+        "server": "majidai@test",
+        // allow cross origin to all
+        "Access-Control-Allow-Origin":"*",
     }
 };
 
@@ -38,5 +46,6 @@ server.get("/", function (app) {
 
     return "Hello majidai";
 });
+
 // start listening server
 server.start();

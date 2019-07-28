@@ -6,22 +6,20 @@ RUN apk --update add nodejs npm git
 # making working directory data
 WORKDIR /data
 
-# install majidai
-RUN npm install -g majidai
-
-# set path
-ENV NODE_PATH=/usr/lib/node_modules
-
-# open port
-EXPOSE 80
-
 # main file
 RUN git init
 RUN git remote add origin https://github.com/dakc/majidai.git
 RUN git fetch
 RUN git checkout refs/tags/docker -- example
 
+# change working directory
 WORKDIR /data/example
 
+# install majidai 
+RUN npm install
+
+# open port
+EXPOSE 80
+
 # run nodejs
-ENTRYPOINT ["node", "index.js"]
+CMD ["node", "index.js"]
