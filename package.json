@@ -1,6 +1,6 @@
 {
   "name": "majidai",
-  "version": "1.0.5-rc.23",
+  "version": "1.0.5-rc.24",
   "description": "A simple and light weight web framework for nodejs",
   "main": "index.js",
   "scripts": {
