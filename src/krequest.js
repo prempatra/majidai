@@ -5,8 +5,8 @@ const Kresponse = require("./kresponse");
  * this class extends response controlling class
  */
 class Krequest extends Kresponse {
-    constructor() {
-        super();        
+    constructor(...args) {
+        super(args);        
     }
 
     setRequest(request){

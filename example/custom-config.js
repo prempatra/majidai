@@ -17,9 +17,9 @@ const customConfig = {
     log: {
         // activate access log
         // write every access infomation to log file
-        access: true,
-        // activate debug log
-        debug: true,
+        isWriteAccess: true,
+        // folder to log
+        folder: "./myfolder",
     },
     // change the server name
     header: {

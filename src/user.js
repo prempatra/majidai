@@ -1,67 +1,16 @@
 // make methods accessible from user
 module.exports = function (sessObj, logger, reqResp) {
     let obj = Object.create(null);
-    obj.cookieId = "";
+    
     // add logger
-    Object.defineProperty(obj, "logger", {
-        value: {
-            debug: function (content, isAddPrefix = false) {
-                if (!isAddPrefix) return logger.debug(content);
-                return logger.debug(this.getPrefix() +  + "," + content);
-            },
-            error: function (content, isAddPrefix = false) {
-                if (!isAddPrefix) return logger.error(content);
-                return logger.error(this.getPrefix() +  + "," + content);
-            },
-            getPrefix: function () {
-                return new Date().toLocaleString() + "," +
-                    reqResp.ip() + "," +
-                    reqResp.hostName() + "," +
-                    reqResp.userAgent() + "," +
-                    reqResp.method() + "," +
-                    reqResp.referrer() + "," +
-                    reqResp.url();
-            }
-        }
-    });
-
-    // add session functions for user
-    Object.defineProperty(obj, "session", {
-        value: {
-            put: function (key, value) {
-                return sessObj.put(obj.cookieId, key, value);
-            },
-            delete: function (key) {
-                return sessObj.delete(obj.cookieId, key);
-            },
-            get: function (key) {
-                // return sessObj.get(obj.cookieId, key);
-                var usrDt = sessObj.getAll(obj.cookieId);
-                if (!key) return usrDt;
-                if (usrDt.hasOwnProperty(key)) return usrDt[key];
-                return "";
-            },
-            regenId: function () {
-                obj.cookieId = sessObj.regenId(obj.cookieId);
-                // write cookie in response
-                reqResp.setCookie(sessObj.vars.sessionId, obj.cookieId);
-            },
-            destroy: function (key) {
-                return sessObj.destroy(obj.cookieId);
-            }
-        }
-    });
+    obj.logger = logger;
 
     Object.defineProperty(obj, "data", {
         value: (function () {
-            var getData,postData;
+            var getData, postData;
             return {
-                setGetParam: function (dt) {
-                    getData = dt;
-                },
-                setPostParam: function (dt) {
-                    postData = dt;
-                },
+                setGetParam: dt => getData = dt,
+                setPostParam: dt => postData = dt,
                 getParams: function (key) {
                     if (!key) return getData;
                     if (key in getData) return getData[key];
@@ -78,53 +27,66 @@ module.exports = function (sessObj, logger, reqResp) {
 
     Object.defineProperty(obj, "respond", {
         value: {
-            static: function (filePath) {
-                return reqResp.sendStaticResponse(filePath);
-            },
-            error: function (errCode,msg="") {
-                return reqResp.respondErr(errCode,msg);
-            },
-            plainText: function (content) {
-                return reqResp.sendResp("text/plain", content);
-            },
-            html: function (content) {
-                return reqResp.sendResp("text/html", content);
-            },
-            json: function (content) {
-                return reqResp.sendJsonResponse(content);
-            },
-            redirect: function (url) {
-                return reqResp.redirectUrl(url);
+            static: filePath => reqResp.sendStaticResponse(filePath),
+            error: (errCode, msg = "") => reqResp.respondErr(errCode, msg),
+            plainText: content => reqResp.sendResp("text/plain", content),
+            html: content => reqResp.sendResp("text/html", content),
+            json: content => reqResp.sendJsonResponse(content),
+            redirect: url => reqResp.redirectUrl(url),
+        }
+    });
+
+
+    // add session functions for user
+    if (sessObj.config.isActivate) {
+        obj.cookieId = "";
+        Object.defineProperty(obj, "session", {
+            value: {
+                put: (k, v) => sessObj.put(obj.cookieId, k, v),
+                delete: k => sessObj.delete(obj.cookieId, k),
+                get: function (key) {
+                    // return sessObj.get(obj.cookieId, key);
+                    var usrDt = sessObj.getAll(obj.cookieId);
+                    if (!key) return usrDt;
+                    if (usrDt.hasOwnProperty(key)) return usrDt[key];
+                    return "";
+                },
+                regenId: function () {
+                    obj.cookieId = sessObj.regenId(obj.cookieId);
+                    // write cookie in response
+                    reqResp.setCookie(sessObj.vars.sessionId, obj.cookieId);
+                },
+                destroy: () => sessObj.destroy(obj.cookieId)
             }
-        }
-    });
+        });
 
-    Object.defineProperty(obj, "triggerLoginCheck", {
-        value: function (url) {
-            obj.cookieId = sessObj.regenId(obj.cookieId);
-            // write cookie in response
-            reqResp.setCookie(sessObj.vars.sessionId, obj.cookieId);
-            return sessObj.put(obj.cookieId, sessObj.vars.isUserLogged, 1);
-        }
-    });
-    Object.defineProperty(obj, "mustBeLoggedIn", {
-        value: function (param) {
-            var isLogged = sessObj.get(obj.cookieId, sessObj.vars.isUserLogged);
-            if (isLogged) return true;
 
-            if (!param) return reqResp.respondErr(401);
-            if (typeof param === "string") return reqResp.respondErr(401, param);
+        Object.defineProperty(obj, "triggerAuthCheck", {
+            value: function (url) {
+                obj.cookieId = sessObj.regenId(obj.cookieId);
+                reqResp.setCookie(sessObj.vars.sessionId, obj.cookieId);
+                return sessObj.put(obj.cookieId, sessObj.vars.isUserLogged, 1);
+            }
+        });
+        Object.defineProperty(obj, "mustBeAuthorized", {
+            value: function (param) {
+                var isLogged = sessObj.get(obj.cookieId, sessObj.vars.isUserLogged);
+                if (isLogged) return true;
 
-            if (typeof param === "object") {
-                if (param.hasOwnProperty("url")) {
-                    return reqResp.redirectUrl(param.url);
+                if (!param) return reqResp.respondErr(401);
+                if (typeof param === "string") return reqResp.respondErr(401, param);
+
+                if (typeof param === "object") {
+                    if (param.hasOwnProperty("url")) {
+                        return reqResp.redirectUrl(param.url);
+                    }
                 }
-            }
 
-            obj.logger.error("parameter for mustBeLoggedIn is invalid",true);
-            return reqResp.respondErr(401);
-        }
-    });
+                obj.logger.error("parameter for mustBeAuthorized is invalid", true);
+                return reqResp.respondErr(401);
+            }
+        });
+    }
 
     // node native request and response
     Object.defineProperty(obj, "native", {
@@ -163,14 +125,18 @@ module.exports = function (sessObj, logger, reqResp) {
                         reqResp.addCookie(args[0]);
                         return true;
                     }
-                    
-                }else if (args.length === 2 && typeof args[0] == "string" && typeof args[1] == "string") {
-                    reqResp.addCookie({ key: args[0], value: args[1] });
+
+                } else if (args.length === 2 && typeof args[0] == "string" && typeof args[1] == "string") {
+                    reqResp.addCookie({
+                        key: args[0],
+                        value: args[1]
+                    });
                     return true;
                 }
-                
+
                 return false
-            }
+            },
+            deleteCookie: k => reqResp.deleteCookie(k)
         }
     });
     return obj;

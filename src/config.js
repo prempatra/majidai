@@ -5,16 +5,9 @@ module.exports = class Config{
     constructor() {
         this.port = 80;
         this.host = "0.0.0.0";
-        this.log = {
-            folder: "./log",
-            access: false,
-            debug: false,
-            error: true
-        };
         this.publicDir = "./public";
         this.isProduction = true;
-        // miliseconds
-        this.sessionTime = 1000 * 60 * 5;
+
         // byte
         this.maxBodySize = 100 * 1024;
         this.header = {
@@ -24,8 +17,19 @@ module.exports = class Config{
             "server": "majidai@1.0",
             "Access-Control-Allow-Origin":"*",
         };
-        this.allowedMthod = ["GET","POST"]
-        this.allowedContentType = ["application/x-www-form-urlencoded", "application/json", "multipart/form-data"]
+        this.allowedMthod = ["GET", "POST"];
+        this.allowedContentType = ["application/x-www-form-urlencoded", "application/json", "multipart/form-data"];
+
+        this.session = {
+            isActivate: true,
+            timeOut: 1000 * 60 * 5, // miliseconds
+        };
+
+        this.log = {
+            folder: "./log",
+            isWriteAccess: false,
+            isProd: this.isProduction,
+        };
     }
 
     // apply user configuration
@@ -62,14 +66,23 @@ module.exports = class Config{
             this.isProduction = userConfig.isProduction;
         }
 
-        if (userConfig.hasOwnProperty("sessionTime")) {
-            if (typeof userConfig.sessionTime !== "number") {
+        if (userConfig.hasOwnProperty("session")) {
+            this._validateObject(this.session, userConfig["session"]);
+            for (const key in this.session) {
+                if (Object.keys(userConfig["session"]).includes(key)) continue;
+                userConfig["session"][key] = this.session[key];
+            }
+            this.session = userConfig.session;
+
+            if (typeof this.session.timeOut !== "number") {
                 throw new TypeError(MSG.ERR_INVALID_DATA_TYPE_SESSION_TIME);
             }
-            if (userConfig.sessionTime < 1) {
+            if (this.session.timeOut < 1) {
                 throw new TypeError(MSG.ERR_INVALID_SESSION_TIME);
             }
-            this.sessionTime = userConfig.sessionTime;
+            if (typeof this.session.isActivate !== "boolean") {
+                throw new TypeError(MSG.ERR_INVALID_DATA_TYPE_SESSION_ACTIVATION);
+            }
         }
 
         if (userConfig.hasOwnProperty("maxBodySize")) {
@@ -90,6 +103,7 @@ module.exports = class Config{
                 userConfig["log"][key] = this.log[key];
             }
             this.log = userConfig.log;
+            this.log["isProd"] = this.isProduction;
         }
 
         if (userConfig.hasOwnProperty("header")) {

@@ -2,12 +2,7 @@
 const majidai = require("majidai");
 
 // create instance
-const server = new majidai({
-    isProduction: false,
-    log: {
-        debug: true
-    }
-});
+const server = new majidai({ isProduction: false });
 
 // gt routing
 server.get("/", function (app) {
@@ -18,9 +13,9 @@ server.get("/", function (app) {
 server.get("/books/{year}/{price}", function (app) {
     // parameters enclosed with {} can be accessed directly from data.getParams
     var yearParam = app.data.getParams("year");
-    console.log(yearParam);
+    app.logger.info(yearParam);
     var priceParam = app.data.getParams("price");
-    console.log(priceParam);
+    app.logger.info(priceParam);
 
     // get all GET parameters
     var getParams = app.data.getParams();

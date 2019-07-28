@@ -25,21 +25,28 @@ Date.prototype.addYears = function(n) {
  */
 class Kresponse {
 
+    constructor(...args) {
+        this.config = args[0][0];
+    }
+
     setResponse(response){
         // http response object
         this.response = response;
     }
 
-    /**
-     * set the header for response
-     * 
-     * @param {object} hdrObj - {key:value,key:value}
-     */
-    setHeader(hdrObj) {
-        Object.keys(hdrObj).forEach(key => {
-            this.response.setHeader(key, hdrObj[key]);
-        });
+    overrideError(callback) {
+        this._errorCallback = callback;
     }
+    // /**
+    //  * set the header for response
+    //  * 
+    //  * @param {object} hdrObj - {key:value,key:value}
+    //  */
+    // setHeader(hdrObj) {
+    //     Object.keys(hdrObj).forEach(key => {
+    //         this.response.setHeader(key, hdrObj[key]);
+    //     });
+    // }
 
      /**
      * set cookie in the response
@@ -96,7 +103,10 @@ class Kresponse {
         if (this.isHeadersSent()) return;
 
         this.response.statusCode = statusCode;
-        this.response.setHeader("Content-Type", `${contentType}; charset=utf-8`);
+        this.config.header["Content-Type"] = `${contentType}; charset=utf-8`;
+        for (var k in this.config.header) {
+            this.response.setHeader(k, this.config.header[k]);
+        }
         this.response.write(content);
         this.response.end();
     }
@@ -115,9 +125,13 @@ class Kresponse {
                     let ext = path.extname(filePath).toLocaleLowerCase();
                     let allowedExt = Object.keys(CONTENT_TYPE);
                     if (allowedExt.includes(ext)) {
-                        let contType = CONTENT_TYPE[ext];
+                        let contentType = CONTENT_TYPE[ext];
                         this.response.statusCode = 200;
-                        this.response.setHeader("Content-Type", `${contType}; charset=utf-8`);
+                        this.config.header["Content-Type"] = `${contentType}; charset=utf-8`;
+                        for (var k in this.config.header) {
+                            this.response.setHeader(k, this.config.header[k]);
+                        }
+
                         // if images are passed with second parameter as encoding then browser wont display them properly
                         if (BINARY_RESP.includes(ext)) {
                             fs.createReadStream(filePath).pipe(this.response);
@@ -150,7 +164,11 @@ class Kresponse {
             return "Woops! Something went wrong.";
         })(args[0]);
 
-        this.sendResp(contentType, msg, args[0]);
+        var errObj = { contentType: contentType, errMsg: msg, errCode: args[0] };
+        if (typeof this._errorCallback === "function") {
+            errObj = this._errorCallback(errObj);
+        }
+        this.sendResp(errObj.contentType, errObj.errMsg, errObj.errCode);
     }
 
     isHeadersSent() {

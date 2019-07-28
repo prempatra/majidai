@@ -5,7 +5,7 @@ No extra libraries are required.
 
 ※日本語の場合は、画面の下の部分までスクロールしてください。
 
-[![Build Status](https://travis-ci.com/dakc/majidai.svg?branch=master)](https://travis-ci.com/dakc/majidai)
+[![Build Status](https://travis-ci.com/dakc/majidai.svg?branch=develop)](https://travis-ci.com/dakc/majidai)
 [![npm](https://img.shields.io/npm/v/majidai.svg)](https://www.npmjs.com/package/majidai) 
 [![GitHub license](https://img.shields.io/github/license/dakc/majidai.svg?style=popout)](https://github.com/dakc/majidai/blob/master/LICENSE) 
 
@@ -46,6 +46,10 @@ server.get("/books/{year}/{price}", function (app) {
 server.post("/", function (app) {
     // get all POST parameters
     var postParams = app.data.postParams();
+    
+    // do something
+    // ..
+    
     // response data as JSON data
     return postParams;
 });
@@ -74,6 +78,8 @@ app
 |             |-------access
 |             |-------error
 |             |-------debug
+|             |-------warn
+|             |-------info
 |------respond
 |             |-------static
 |             |-------error
@@ -89,11 +95,14 @@ app
 |             |-------url
 |             |-------method
 |             |-------headers
+|             |-------getCookie
+|             |-------addCookie
+|             |-------deleteCookie
 |------native
 |             |-------request
 |             |-------response
-|------triggerLoginCheck
-|------mustBeLoggedIn
+|------triggerAuthCheck
+|------mustBeAuthorized
 ```
 
 ## 4. Samples
@@ -165,6 +174,35 @@ server.get("/books/{year}/{price}", function (app) {
     return getParams;
 });
 ```
+##### エラー処理のカスタマイズ
+```
+// 受け取った引数の中身を変えて変えすだけです
+server.onError(function (errObj) {
+
+    //  管理者にメールで通知するなどの処理
+    // ..
+
+    // content-typeをtext/htmlにする
+    errObj.contentType = "text/html";
+    
+    // エラー内容を以下のようにHTML文章にする
+    errObj.errMsg = `
+    <html>
+    <head>
+    <title>custom error</title>
+    </head>
+    <body>
+        <h1><span style='color:#ff0000'>Woops!</span> Something Went Wrong</h1>
+        <p>${errObj.errMsg}</p>
+    </body>
+    </html>
+    `;
+    
+    // 中身を変えた引数を返す
+    return errObj;
+});
+```
+書き方については、[サンプル custom-error.js](./example/custom-error.js)を参考にしてください。
 
 #### 機能一覧
 ###### 1. データ管理
@@ -174,7 +212,7 @@ server.get("/books/{year}/{price}", function (app) {
 
 ###### 2. セッション管理
 セッションについては「session」属性が管理します。以下のメソッドを持ちます。
-- put - セッションに情報を格納する（KEY,VALUE）
+- put - セッションに情報を格納する
 - get - セッションに情報を取得
 - delete - 指定のキーをセッションから削除する
 - destroy - セッションに情報を全て削除する
@@ -185,6 +223,8 @@ server.get("/books/{year}/{price}", function (app) {
 - access - クライアント端末とリクエストの情報をログとして出力する
 - error - エラーログの出力
 - debug - デバッグ用のログの出力
+- warn - 警告用のログの出力
+- info - 一般用ログの出力
 
 ###### 4. クライアント情報
 クライアントPCについては「client」属性が管理します。以下のメソッドを持ちます。
@@ -193,12 +233,16 @@ server.get("/books/{year}/{price}", function (app) {
 - userAgent - ブラウザの情報
 - referrer - リファラー
 - url - アクセス中のURL
-- method - アクセスしてきたHTTPのメソッド(GET?POST?)
+- method - アクセスしてきたHTTPのメソッド(GETかPOSTか等)
 - headers - ヘッダー情報（キーを指定する事で特定のヘッダーのみ取得することも可能）
+- getCookie - Cookie情報取得
+- addCookie - Cookieの追加
+- deleteCookie - Cookieの削除
 
 ###### 5. 認証処理
-- triggerLoginCheck - 正常なアクセスかどうかチェックするトリガー
-- mustBeLoggedIn - 上のtriggerLoginCheck設定したページをアクセスせず、mustBeLoggedInを設定したページにアクセスすると（パラメータで指定したURLにリダイレクトされ、それ以降のコードが実行されない(returnする必要があり、下のほうにsample.jsを紹介しております。そちらを見てください。)）
+- triggerAuthCheck - 許可したアクセスかどうかチェックするトリガー
+- mustBeAuthorized - 上のtriggerAuthCheck設定したページをアクセスせず、mustBeAuthorizedを設定したページにアクセスすると（パラメータで指定したURLにリダイレクトされ、それ以降のコードが実行されない。
+書き方については、[サンプル-authentication.js](./example/authentication.js)を参考にしてください
 
 ###### 6. レスポンス
 クライアントへのレスポンスについては「respond」属性が管理します。
@@ -214,43 +258,8 @@ node標準のhttpモジュールのrequestとresponseについては「native」
 - request - node標準のhttpモジュールのrequest機能
 - response - node標準のhttpモジュールのresponse機能
 
-まとめると以下のようになります
-```
-app
-|------data
-|             |-------getParams
-|             |-------postParams
-|------session
-|             |-------put
-|             |-------get
-|             |-------delete
-|             |-------destroy
-|             |-------regenId
-|------logger
-|             |-------access
-|             |-------error
-|             |-------debug
-|------respond
-|             |-------static
-|             |-------error
-|             |-------plainText
-|             |-------html
-|             |-------json
-|             |-------redirect
-|------client
-|             |-------ip
-|             |-------hostName
-|             |-------userAgent
-|             |-------referrer
-|             |-------url
-|             |-------method
-|             |-------headers
-|------native
-|             |-------request
-|             |-------response
-|------triggerLoginCheck
-|------mustBeLoggedIn
-```
+ツリービューにまとめると、[「3. Features」のようになります。](#3-features)
+
 
 #### sample
 下記のリンクに色々サンプルデータをおいています。ファイル名がその中身の概要を表しています。

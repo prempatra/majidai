@@ -178,7 +178,113 @@ describe("test for session data", () => {
     });
 });
 
-
 describe("test for headers", () => {
+    it("should return x-content-type-options to be empty string", done => {
+        needle('get', url)
+            .then(res => {
+                assert.isEmpty(res.headers["x-content-type-options"]);
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
 
+    it("should return x-frame-options to be deny", done => {
+        needle('get', url)
+            .then(res => {
+                assert.equal(res.headers["x-frame-options"],"deny");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should return x-xss-protection to be 0", done => {
+        needle('get', url)
+            .then(res => {
+                assert.equal(res.headers["x-xss-protection"],0);
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should return Access-Control-Allow-Origin to be *", done => {
+        needle('get', url)
+            .then(res => {
+                assert.equal(res.headers["access-control-allow-origin"],"*");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+
+    it("should return server", done => {
+        needle('get', url)
+            .then(res => {
+                assert.equal(res.headers["server"],"majidai@test");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+});
+
+describe("test for cookie manipulation", (done) => {
+    it("should return default cookie with name __KSESID", done => {
+        needle('get', url)
+            .then(res => {
+                assert.include(res.headers["set-cookie"][0], "__KSESID");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should return 2 cookies, first to be the default and second to be the cookie set by user", (done) => {
+        needle('get', `${url}/cookie/poweredby/majidai`)
+            .then(res => {
+                assert.equal(res.headers["set-cookie"].length, 2);
+                assert.include(res.headers["set-cookie"][0], "__KSESID");
+                assert.equal(res.headers["set-cookie"][1], "poweredby=majidai;");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should return cookie with httponly parameter activated", (done) => {
+        needle('get', `${url}/cookie/author/dakc?httpOnly=1`)
+            .then(res => {
+                assert.equal(res.headers["set-cookie"].length, 2);
+                assert.include(res.headers["set-cookie"][0], "__KSESID");
+                assert.equal(res.headers["set-cookie"][1], "author=dakc; HttpOnly;");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should return cookie with http only and expires parameter activated", (done) => {
+        const expireDate = new Date();
+        needle('get', `${url}/cookie/poweredby/majidai?httpOnly=1&expireDate=${expireDate}`)
+            .then(res => {
+                assert.equal(res.headers["set-cookie"].length, 2);
+                assert.include(res.headers["set-cookie"][0], "__KSESID");
+                let userSetCookie = `poweredby=majidai; HttpOnly; Expires=${expireDate};`;
+                // cookie will remove + sign from GMT
+                // for eg
+                // poweredby=majidai; HttpOnly; Expires=Sun Jul 28 2019 11:13:34 GMT+0900 (GMT+09:00);
+                // will be
+                // poweredby=majidai; HttpOnly; Expires=Sun Jul 28 2019 11:13:34 GMT 0900 (GMT 09:00);
+                userSetCookie = userSetCookie.replace(/GMT\+/g, "GMT ");
+                assert.equal(res.headers["set-cookie"][1], userSetCookie);
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should delete the default cookie with name __KSESID", done => {
+        needle('get', `${url}/cookie/__KSESID?type=delete`)
+            .then(res => {
+                assert.equal(res.headers["set-cookie"].length, 1);
+                // the value will be empty and expiry date will be past
+                assert.include(res.headers["set-cookie"][0], "__KSESID=; expires=Thu Jan 01 1970");
+                done();
+            })
+            .catch(err => { console.error(err); done() });
+    });
 });

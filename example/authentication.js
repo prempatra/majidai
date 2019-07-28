@@ -39,9 +39,9 @@ server.post("/login", function (app) {
 
     if (isLogged) {
         // trigger login check
-        // if the routing including mustBeLoggedIn is called before executing here,
-        // code after mustBeLoggedIn wont be executed
-        app.triggerLoginCheck();
+        // if the routing including mustBeAuthorized is called before executing here,
+        // code after mustBeAuthorized wont be executed
+        app.triggerAuthCheck();
         // remember user id 
         app.session.put("user_id", userId);
         // redirect to /home
@@ -56,7 +56,7 @@ server.post("/login", function (app) {
 // 3. sensible content
 server.get("/home", function (app) {
     // unauthorized access
-    if (!app.mustBeLoggedIn("UnAuthorized Access")) return;
+    if (!app.mustBeAuthorized("UnAuthorized Access")) return;
 
     // below here for authorized user
     //  get data from session

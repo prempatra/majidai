@@ -1,49 +1,18 @@
-const fs= require('fs');
+const fs = require('fs');
 
 class Klog {
-    constructor(config,isProd=true) {
+    constructor(config) {
         try {
-            this._isProduction = typeof isProd === "boolean" ? isProd : true;
-            this._isDebug = false;
-            this._isAcccess = false;
-            this._isError = true;
-            this._logFolder = "./log";
-            this._validate(config);
+            this._config = config;
+            this._logFile = config.folder + "/app.log";
+
+            if (!fs.existsSync(config.folder)) {
+                fs.mkdirSync(config.folder);
+                this.info(`【log folder】「${config.folder}」 is created.`);
+            }
         } catch (err) {
             throw err;
         }
-    }
-
-    /**
-     * validate the configuration object
-     * @param {object} config 
-     */
-    _validate(config) {
-        if (config == undefined || typeof config != "object") return;
-        if (Object.keys(config).length === 0) return;
-
-        if (!config.hasOwnProperty("folder")) {
-            config.folder = this._logFolder;
-        }
-        
-        this._isDebug = config.hasOwnProperty("debug") ? config.debug : this._isDebug;
-        this._isAcccess = config.hasOwnProperty("access") ? config.access : this._isAcccess;
-        this._isError = config.hasOwnProperty("error") ? config.error : this._isError;
-        this._logFolder = config.folder;
-
-        if (!fs.existsSync(config.folder)) {
-            fs.mkdirSync(config.folder);
-            this.debug (`【log folder】「${config.folder}」 is created.`);
-        }
-    }
-
-    /**
-     * set logfile name to yyyy-mm-dd
-     */
-    _getFilename() {
-        const zeroFill = (num) => { return num.toString().length < 2 ? Array(2).join("0") + num : num };
-        const dateObj = new Date();
-        return `${dateObj.getFullYear()}-${zeroFill(dateObj.getMonth() + 1)}-${zeroFill(dateObj.getDate())}`;
     }
 
     /**
@@ -53,24 +22,13 @@ class Klog {
      * @param {string} content 
      */
     _write(filePath, content) {
-        var isProd = this._isProduction;
-        var appendLog = () => {
+        try {
             fs.appendFile(filePath, content + "\n", function (err) {
-                if (isProd) return;
-                err && console.error(err) || console.log(content);
+                err && console.error(err);
             });
+        } catch (err) {
+            console.error(err);
         }
-        setTimeout(appendLog, 100);
-    }
-
-    /**
-     * check if the given data is not empty string
-     * @param {string} arg 
-     */
-    _isEmptyString(arg) {
-        if (typeof arg !== "string") return false;
-        if (!arg.trim().length) return false;
-        return true;
     }
 
     /**
@@ -80,10 +38,10 @@ class Klog {
      * @param {string} content 
      */
     error(content) {
-        if(!this._isProduction) console.error(content);
-        if (!this._isError) return true;
-        if (!this._isEmptyString(content)) return false;
-        this._write(`${this._logFolder}/${this._getFilename()}.error`, content);
+        if (!this._config.isProd) console.error(content);
+        if (typeof content !== "string") return false;
+        content = "ERROR," + new Date().toLocaleString() + "," + content;
+        this._write(this._logFile, content);
     }
 
     /**
@@ -93,12 +51,36 @@ class Klog {
      * @param {string} content 
      */
     debug(content) {
-        if(!this._isProduction) console.debug(content);
-        if (!this._isDebug) return true;
-        if (!this._isEmptyString(content)) return false;
+        if (!this._config.isProd) console.debug(content);
+        if (typeof content !== "string") return false;
+        content = "DEBUG," + new Date().toLocaleString() + "," + content;
+        this._write(this._logFile, content);
+    }
 
-        content = new Date().toLocaleString() + "," + content;
-        this._write(`${this._logFolder}/${this._getFilename()}.debug`, content);
+    /**
+     * write info log to a file
+     * if the application mode is not production,
+     * then it will also show the log on console
+     * @param {string} content 
+     */
+    info(content) {
+        if (!this._config.isProd) console.info(content);
+        if (typeof content !== "string") return false;
+        content = "INFO," + new Date().toLocaleString() + "," + content;
+        this._write(this._logFile, content);
+    }
+
+    /**
+     * write warn log to a file
+     * if the application mode is not production,
+     * then it will also show the log on console
+     * @param {string} content 
+     */
+    warn(content) {
+        if (!this._config.isProd) console.warn(content);
+        if (typeof content !== "string") return false;
+        content = "WARNING," + new Date().toLocaleString() + "," + content;
+        this._write(this._logFile, content);
     }
 
     /**
@@ -108,10 +90,20 @@ class Klog {
      * @param {string} content 
      */
     access(content) {
-        if (!this._isAcccess) return true;
-        if (!this._isEmptyString(content)) return false;
+        if (!this._config.isProd) console.log(content);
+        if (!this._config.isWriteAccess) return true;
+        if (typeof content !== "string") return false;
 
-        this._write(`${this._logFolder}/${this._getFilename()}.access`, content);
+        // set logfile name to yyyy-mm-dd
+        var getFilename = () => {
+            const zeroFill = (num) => {
+                return num.toString().length < 2 ? Array(2).join("0") + num : num
+            };
+            const dateObj = new Date();
+            return `${dateObj.getFullYear()}-${zeroFill(dateObj.getMonth() + 1)}-${zeroFill(dateObj.getDate())}`;
+        }
+
+        this._write(`${this._config.folder}/${getFilename()}.access`, content);
     }
 }
 module.exports = Klog;

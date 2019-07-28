@@ -9,13 +9,14 @@ class Ksession {
     /**
      * create user collection
      * 
-     * @param {number} sesTime | session alive time
+     * @param {object}  | (activate,timeOut)
      */
-    constructor(sesTime) {
+    constructor(config) {
+        this.config = config;
         // create user collection to store user data
         this.data = new Map();
         // session alive time
-        this.allowedTime = sesTime;
+        this.allowedTime = config.timeOut || 1000 * 60 * 5;
         // config variables
         this.vars = SESSION_VAR;
     }
