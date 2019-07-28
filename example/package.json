@@ -1,9 +1,9 @@
 {
   "name": "majidai",
   "version": "1.0.0",
-  "main": "authentication.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node authentication.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",

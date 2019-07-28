@@ -15,6 +15,9 @@ const config = {
     }
 };
 
+// create instance
+const server = new majidai(config);
+
 server.get("/", function (app) {
     return "Hello majidai";
 });
