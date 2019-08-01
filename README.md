@@ -118,7 +118,7 @@ docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 Open Browser and access to access to http://localhost:8000/
 
 ## 6. https(http2)
-By just setting parameters in configuration we can easily create http server
+By just setting parameters in configuration we can easily create https server
 ```
 var config = {
     ssl:{ 
@@ -307,8 +307,9 @@ var config = {
       }
 }
 ```
-詳細については以下のページに記載しています。
-https://github.com/dakc/majidai/tree/develop/example/secure.js
+&nbsp;
+書き方については、[サンプル-secure.js](https://github.com/dakc/majidai/tree/develop/example/secure.js)を参考にしてください
+
 
 #### DOCUMENTATION
 詳細については以下のページに記載しています。
