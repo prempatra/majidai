@@ -1,6 +1,5 @@
 # majidai
-A simple and light web framework for nodejs  
-with less then 50KB(npm install).  
+A simple and light web framework for nodejs with less then 50KB(npm install).  
 No extra libraries are required.  
 majidai is a configuration centralized webframework.
 We can easily create HTTPS SERVER (including http2) by just customizing the configuration.
