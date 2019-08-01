@@ -261,7 +261,8 @@ server.onError(function (errObj) {
 
 ###### 5. 認証処理
 - triggerAuthCheck - 許可したアクセスかどうかチェックするトリガー
-- mustBeAuthorized - 上のtriggerAuthCheck設定したページをアクセスせず、mustBeAuthorizedを設定したページにアクセスすると（パラメータで指定したURLにリダイレクトされ、それ以降のコードが実行されない。  
+- mustBeAuthorized - 上のtriggerAuthCheck設定したページをアクセスせず、mustBeAuthorizedを設定したページにアクセスすると（パラメータで指定したURLにリダイレクトされ、それ以降のコードが実行されない。
+
 &nbsp;
 書き方については、[サンプル-authentication.js](./example/authentication.js)を参考にしてください
 
