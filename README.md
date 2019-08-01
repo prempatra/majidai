@@ -313,6 +313,7 @@ var config = {
 
 #### DOCUMENTATION
 詳細については以下のページに記載しています。
+&nbsp;
 https://dakc.github.io/majidai.html <-- 英語のみです。ごめんなさい。
 
 ### Todos
