@@ -2,6 +2,8 @@
 A simple and light web framework for nodejs  
 with less then 50KB(npm install).  
 No extra libraries are required.  
+majidai is a configuration centralized webframework.
+We can easily create HTTPS SERVER (including http2) by just customizing the configuration.
 
 ※日本語の場合は、[画面の下の部分までスクロールしてください](#日本語)。
 
