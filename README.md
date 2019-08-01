@@ -116,8 +116,23 @@ docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 ```
 Open Browser and access to access to http://localhost:8000/
 
+#### https(http2)
+By just setting parameters in configuration we can easily create http server
+```
+var config = {
+    ssl:{ 
+        key: 'ssl/key.pem',
+        cert: 'ssl/cert.pem',
+        port: 443,
+        http2: false,   // making true activates h2 protocol
+        http: true,     // making false will listen https only not http
+      }
+}
+```
+For how to use refer below  
+https://github.com/dakc/majidai/tree/develop/example/secure.js
+
 ## TODO
-- https, http/2 support  
 - support for other http methods like PUT,DELETE,etc  
 
 # Documentaion - https://dakc.github.io/majidai.html
@@ -132,7 +147,7 @@ Open Browser and access to access to http://localhost:8000/
 nodejs用のシンプルかつ軽量なWebフレームワークです。  
 NODEの標準環境で動作するため、ほかのライブラリーが不要です。  
 50KB以下ですのでとても軽いです(npm経由でインストールした場合)。
-
+コンフィグベースのフレームワークです。コンフィグにパラメータを設定するだけで簡単にhttps(http2含む)サーバーを作れます。
 #### インストール
 ```
 npm install majidai
@@ -177,6 +192,9 @@ server.get("/books/{year}/{price}", function (app) {
 });
 ```
 ##### エラー処理のカスタマイズ
+serverオブジェクトのonErrorメソッドを呼ぶとエラーレスポンスの時に必ず最後にこのなかの処理が実行されます。
+処理中で起きたまたは、意図的に起こしたエラーの情報（コード、メッセージ、コンテンツタイプ）が引数として入ります。
+受け取った引数の中身を変えて返すだけです。
 引数で受けたオブジェクトの中身が以下のようになっています。
 ```
 errObj = {
@@ -185,7 +203,7 @@ errObj = {
     errMsg: エラー内容
 }
 ```
-受け取った引数の中身を変えて変えすだけです。
+下記の場合は、エラー内容をh1として返されます。
 ```
 server.onError(function (errObj) {
 
@@ -275,12 +293,27 @@ docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 ブラウザーを開いて、http://localhost:8000/
 にアクセスすると「Hello majidai」が表示されます。
 
+#### https(http2)
+以下のようにパラメータを設定する事でhttpsサーバーを創ります。
+```
+var config = {
+    ssl:{ 
+        key: 'ssl/key.pem',
+        cert: 'ssl/cert.pem',
+        port: 443,
+        http2: false,   // trueにするとh2プロトコルが有効になります
+        http: true,     // falseにするとhttpsのみ有効になります
+      }
+}
+```
+詳細については以下のページに記載しています。
+https://github.com/dakc/majidai/tree/develop/example/secure.js
+
 #### DOCUMENTATION
 詳細については以下のページに記載しています。
 https://dakc.github.io/majidai.html <-- 英語のみです。ごめんなさい。
 
 ### Todos
- - HTTPS,HTTP/2の対応  
  - ほかのHTTPメソッド（PUT、DELETE）の対応  
 
 ##### License - [MIT](LICENSE)

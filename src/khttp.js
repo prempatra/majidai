@@ -1,4 +1,6 @@
 const http = require("http");
+const https = require("https");
+const http2 = require('http2');
 const fs = require("fs");
 const path = require('path');
 const querystring = require('querystring');
@@ -83,12 +85,28 @@ class Khttp {
                 }
             });
 
-            this._server = http.createServer((req, resp) => this.handle(req, resp));
-            this._server.listen(this._config.port, this._config.host);
+            if (this._config.ssl.http) {
+                this._server = http.createServer((req, resp) => this.handle(req, resp));
+                this._server.listen(this._config.port, this._config.host);
+                this._logger.info(`Server Listening at http://${this._config.host}:${this._config.port}`);
+            }
+            
 
-            this._logger.info(`Server Listening at http://${this._config.host}:${this._config.port}`);
+            if (this._config.ssl.isActivate) {
+                if (this._config.ssl.http2) {
+                    http2.createSecureServer({ key: this._config.ssl.key, cert: this._config.ssl.cert }, (req, resp) => this.handle(req, resp))
+                    .listen(this._config.ssl.port, this._config.host);
+                    this._logger.info(`Server Listening at https://${this._config.host}:${this._config.ssl.port} with h2 protocol`);
+                } else {
+                    https.createServer({ key: this._config.ssl.key, cert: this._config.ssl.cert }, (req, resp) => this.handle(req, resp))
+                    .listen(this._config.ssl.port, this._config.host);
+                    this._logger.info(`Server Listening at https://${this._config.host}:${this._config.ssl.port}`);
+                }
+             
+            }
+
             // remove timeout session data every hour
-            if (this._config.header.isActivate) {
+            if (this._config.session.isActivate) {
                 setInterval(() => {
                     try {
                         this._session.validateAll();

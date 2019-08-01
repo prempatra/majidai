@@ -32,6 +32,10 @@ class Kresponse {
     setResponse(response){
         // http response object
         this.response = response;
+        // set response
+        for (var k in this.config.header) {
+            this.response.setHeader(k, this.config.header[k]);
+        }
     }
 
     overrideError(callback) {
@@ -103,10 +107,7 @@ class Kresponse {
         if (this.isHeadersSent()) return;
 
         this.response.statusCode = statusCode;
-        this.config.header["Content-Type"] = `${contentType}; charset=utf-8`;
-        for (var k in this.config.header) {
-            this.response.setHeader(k, this.config.header[k]);
-        }
+        this.response.setHeader("Content-Type", `${contentType}; charset=utf-8`);
         this.response.write(content);
         this.response.end();
     }
@@ -127,10 +128,7 @@ class Kresponse {
                     if (allowedExt.includes(ext)) {
                         let contentType = CONTENT_TYPE[ext];
                         this.response.statusCode = 200;
-                        this.config.header["Content-Type"] = `${contentType}; charset=utf-8`;
-                        for (var k in this.config.header) {
-                            this.response.setHeader(k, this.config.header[k]);
-                        }
+                        this.response.setHeader("Content-Type", `${contentType}; charset=utf-8`);
 
                         // if images are passed with second parameter as encoding then browser wont display them properly
                         if (BINARY_RESP.includes(ext)) {

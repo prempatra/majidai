@@ -115,7 +115,8 @@ module.exports = function (sessObj, logger, reqResp) {
             method: () => reqResp.method(),
             headers: (key) => {
                 if (!key) return reqResp.request.headers;
-                if (reqResp.request.headers.hasOwnProperty(key)) return reqResp.request.headers[key];
+                // if (reqResp.request.headers.hasOwnProperty(key)) return reqResp.request.headers[key];
+                if (key in reqResp.request.headers) return reqResp.request.headers[key];
                 return "";
             },
             addCookie: (...args) => {

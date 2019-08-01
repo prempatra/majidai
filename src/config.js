@@ -1,3 +1,4 @@
+const fs = require('fs');
 const MSG = require("./constants").MSG;
 
 module.exports = class Config{
@@ -30,6 +31,15 @@ module.exports = class Config{
             isWriteAccess: false,
             isProd: this.isProduction,
         };
+
+        this.ssl = {
+            key: 'ssl/key.pem',
+            cert: 'ssl/cert.pem',
+            port: 443,
+            isActivate: false,
+            http: true,
+            http2: false,
+        }
     }
 
     // apply user configuration
@@ -113,6 +123,26 @@ module.exports = class Config{
                 userConfig["header"][key] = this.header[key];
             }
             this.header = userConfig.header;
+        }
+
+        if (userConfig.hasOwnProperty("ssl")) {
+            this._validateObject(this.ssl, userConfig["ssl"]);
+
+            // todo 
+            // check ssl files existence
+            this.ssl.key = fs.readFileSync(userConfig["ssl"]["key"]);
+            this.ssl.cert = fs.readFileSync(userConfig["ssl"]["cert"]);
+            this.ssl.port = userConfig["ssl"]["port"];
+
+            if ("http" in userConfig["ssl"]) {
+                if (typeof userConfig["ssl"]["http"] == "boolean") this.ssl.http = userConfig["ssl"]["http"];
+            }
+
+            if ("http2" in userConfig["ssl"]) {
+                if (typeof userConfig["ssl"]["http2"] == "boolean") this.ssl.http2 = userConfig["ssl"]["http2"];
+            }
+
+            this.ssl.isActivate = true;
         }
 
     }
