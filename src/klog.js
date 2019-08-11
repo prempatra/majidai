@@ -38,7 +38,7 @@ class Klog {
      * @param {string} content 
      */
     error(content) {
-        if (!this._config.isProd) console.error(content);
+        if (!this._config.isProduction) console.error(content);
         if (typeof content !== "string") return false;
         content = "ERROR," + new Date().toLocaleString() + "," + content;
         this._write(this._logFile, content);
@@ -51,7 +51,7 @@ class Klog {
      * @param {string} content 
      */
     debug(content) {
-        if (!this._config.isProd) console.debug(content);
+        if (!this._config.isProduction) console.debug(content);
         if (typeof content !== "string") return false;
         content = "DEBUG," + new Date().toLocaleString() + "," + content;
         this._write(this._logFile, content);
@@ -64,7 +64,7 @@ class Klog {
      * @param {string} content 
      */
     info(content) {
-        if (!this._config.isProd) console.info(content);
+        if (!this._config.isProduction) console.info(content);
         if (typeof content !== "string") return false;
         content = "INFO," + new Date().toLocaleString() + "," + content;
         this._write(this._logFile, content);
@@ -77,7 +77,7 @@ class Klog {
      * @param {string} content 
      */
     warn(content) {
-        if (!this._config.isProd) console.warn(content);
+        if (!this._config.isProduction) console.warn(content);
         if (typeof content !== "string") return false;
         content = "WARNING," + new Date().toLocaleString() + "," + content;
         this._write(this._logFile, content);
@@ -90,7 +90,7 @@ class Klog {
      * @param {string} content 
      */
     access(content) {
-        if (!this._config.isProd) console.log(content);
+        if (!this._config.isProduction) console.log(content);
         if (!this._config.isWriteAccess) return true;
         if (typeof content !== "string") return false;
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>majidai tutorial - POST data</title>
+</head>
+
+<body>
+    <form>
+        <input type="text" name="age" value="22">
+        <input type="text" name="os" value="unix">
+    </form>
+    <button>Submit</button>
+
+    <p id="msg"></p>
+
+
+    <script>
+        document.querySelector("button").addEventListener("click", function () {
+            var json = {};
+            json.age = document.querySelector("input[name='age']").value;
+            json.os = document.querySelector("input[name='os']").value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    document.getElementById("msg").innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send(JSON.stringify(json));
+        });
+    </script>
+    <style>
+        #msg {
+            color: #ff0000;
+            font-style: italic;
+        }
+    </style>
+</body>
+
+</html>
