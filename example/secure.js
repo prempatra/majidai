@@ -20,7 +20,7 @@ const config = {
 };
 
 // create instance
-const server = new majidai();
+const server = new majidai(config);
 
 // create routing
 server.get("/", function (app) {
