@@ -118,4 +118,8 @@ server.get("/iframe", function (app) {
     return app.respond.html(html);
 });
 
+server.customRouting({ method: ['GET', 'POST'], routing: '/multiple-methods' }, function (app) {
+    return app.client.method();
+});
+
 module.exports = { server, config };

@@ -72,6 +72,21 @@ class Khttp {
         this._postRouting.set(args[0], args[1]);
     }
 
+    customRouting(...args){
+        var methodList = args[0].method || [];
+        var route = args[0].routing || "";
+        if (!methodList.length || !route || typeof methodList != "object"){
+            throw new TypeError(MSG.ERR_NOT_VALID_CUSTOM_ROUTING);
+        }
+
+        methodList.forEach(method => {
+            if(this._config.allowedMthod.includes(method)){
+                if(method === "GET") this.get(route, args[1]);
+                if(method === "POST") this.post(route, args[1]);
+            }
+        });
+    }
+
     start() {
         try {
             let userObj = this.userObj;

@@ -130,6 +130,22 @@ describe("test for POST method", () => {
 });
 
 
+describe("test for multiple HTTP methods for single routing", () => {
+    var _url = `${url}/multiple-methods`;
+
+    it("should work on POST method from same routing path", (done) => {
+        needle('post', _url, {})
+            .then(res => assert.equal(res.body, "POST"),done())
+            .catch(err => { console.error(err); done() });
+    });
+
+    it("should work on both GET method from same routing path", (done) => {
+        needle('get', _url, {})
+            .then(res => assert.equal(res.body, "GET"),done())
+            .catch(err => { console.error(err); done() });
+    });
+});
+
 describe("test for session data", () => {
     const headers = {
         headers: {

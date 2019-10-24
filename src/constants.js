@@ -9,6 +9,7 @@ module.exports = {
     MSG: {
         ERR_NOT_VALID_ROUTING: "not valid routing(use numbers,letters,-,_)",
         ERR_ROUTING_DEFINED_MULTIPLE: "same routing is defined multiple time",
+        ERR_NOT_VALID_CUSTOM_ROUTING: "not valid custom routing. First Arg should be object of structure \n{method:['GET', 'POST'], routing:'/dashboard'}",
         ERR_NOT_SUPPORTED_CONTENT_TYPE: "not supported content type",
         ERR_INVALID_ROUTING: "routing is not valid",
         ERR_INVALID_CONFIGURATION: "configuration is not valid",

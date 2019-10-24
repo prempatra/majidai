@@ -11,13 +11,13 @@ We can easily create HTTPS SERVER (including http2) by just customizing the conf
 [![GitHub license](https://img.shields.io/github/license/dakc/majidai.svg?style=popout)](https://github.com/dakc/majidai/blob/master/LICENSE) 
 
 ## 1. Installation
-```
+```bash
 npm install majidai
 ```
 
 ## 2. Start
-With just few lines of code, server is READY.
-```
+majidai is very simple to use. We can create routing with parameters. We also can create a route listening for multiple http methods. We can easily access the data sent by client.
+```javascript
 // import majidai
 const majidai = require("majidai");
 
@@ -29,30 +29,32 @@ server.get("/", function (app) {
     return "Hello majidai";
 });
 
-// get routing with parameters
-server.get("/books/{year}/{price}", function (app) {
+// routing with parameters
+server.post("/books/{year}/{price}", function (app) {
     // parameters enclosed with {} can be accessed directly from data.getParams
     var yearParam = app.data.getParams("year");
     console.log(yearParam);
+
     var priceParam = app.data.getParams("price");
     console.log(priceParam);
 
-    // get all GET parameters
-    var getParams = app.data.getParams();
-    // response GET data as JSON data
-    return getParams;
+    // get all POST parameters in JSON format
+    var postParams = app.data.postParams();
+    
+    // returning JSON will response as application/json
+    return postParams;
 });
 
-// post routing
-server.post("/", function (app) {
+// custom routing (it will listen for both GET & POST methods)
+server.customRouting({ method: ["GET", "POST"], routing: "/login"}, function (app) {
+    // get all GET parameters
+    var postParams = app.data.getParams();
+    
     // get all POST parameters
     var postParams = app.data.postParams();
     
-    // do something
-    // ..
-    
-    // response data as JSON data
-    return postParams;
+    // response data as html
+    return app.respond.html("<html><body>hi</body></html>");
 });
 
 // start listening server
@@ -112,14 +114,14 @@ https://github.com/dakc/majidai/tree/master/example
 
 ## 5. Docker
 Create container with name majidai and run on interactive mode.
-```
+```bash
 docker run -it --rm -p 8000:80 --name majidai dakc/majidai sh
 ```
 Open Browser and access to access to http://localhost:8000/
 
 ## 6. https(http2)
 By just setting parameters in configuration we can easily create https server
-```
+```javascript
 var config = {
     ssl:{ 
         key: 'ssl/key.pem',
@@ -134,9 +136,24 @@ For how to use refer below
 https://github.com/dakc/majidai/tree/develop/example/secure.js
 
 ## TODO
-- support for other http methods like PUT,DELETE,etc  
+- support for other http methods like PUT,DELETE,etc 
+(V1.2.0) 
+- implementing async await
+(V2.0.0) 
 
-# Documentaion - https://dakc.github.io/majidai.html
+
+## Documentaion - https://dakc.github.io/majidai.html
+
+## Release information
+### Oct 24th, 2019
+* added customRouting property which will help to listen multiple http methods for single route.
+The first argument should be an object having following format
+```javascript
+{
+    method: ['GET', 'POST'], // array of http METHODS
+    routing:'/dashboard' // path
+}
+```
 
 &nbsp;  
 &nbsp;  
@@ -319,5 +336,6 @@ https://dakc.github.io/majidai.html <-- 英語のみです。ごめんなさい�
 
 ### Todos
  - ほかのHTTPメソッド（PUT、DELETE）の対応  
+ - async awaitの導入
 
 ##### License - [MIT](LICENSE)
