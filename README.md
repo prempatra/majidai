@@ -29,15 +29,18 @@ server.get("/", function (app) {
     return "Hello majidai";
 });
 
-// routing with parameters
-server.post("/books/{year}/{price}", function (app) {
+// get routing with parameters
+server.get("/books/{year}/{price}", function (app) {
     // parameters enclosed with {} can be accessed directly from data.getParams
     var yearParam = app.data.getParams("year");
-    console.log(yearParam);
-
     var priceParam = app.data.getParams("price");
-    console.log(priceParam);
+    
+    // response as application/json
+    return app.response.json({year: yearParam, price: priceParam});
+});
 
+// post routing
+server.post("/", function (app) {
     // get all POST parameters in JSON format
     var postParams = app.data.postParams();
     
@@ -136,11 +139,10 @@ For how to use refer below
 https://github.com/dakc/majidai/tree/develop/example/secure.js
 
 ## TODO
-- support for other http methods like PUT,DELETE,etc 
-(V1.2.0) 
 - implementing async await
 (V2.0.0) 
-
+- support for other http methods like PUT,DELETE,etc 
+(V2.1.0) 
 
 ## Documentaion - https://dakc.github.io/majidai.html
 
@@ -334,8 +336,8 @@ var config = {
 &nbsp;
 https://dakc.github.io/majidai.html <-- 英語のみです。ごめんなさい。
 
-### Todos
- - ほかのHTTPメソッド（PUT、DELETE）の対応  
+### Todos 
  - async awaitの導入
+ - ほかのHTTPメソッド（PUT、DELETE）の対応 
 
 ##### License - [MIT](LICENSE)
