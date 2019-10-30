@@ -1,12 +1,13 @@
 # majidai
-A simple and light web framework for nodejs with less then 50KB(npm install).  
+A simple and light web framework for nodejs with less then 50KB.  
 No extra libraries are required.  
 majidai is a configuration centralized webframework.
-We can easily create HTTPS SERVER (including http2) by just customizing the configuration.
+We can easily create HTTPS SERVER by just customizing the configuration.
+Similary we can create HTTP2 SERVER by just turning on the http2 flag parameter.
 
 ※日本語の場合は、[画面の下の部分までスクロールしてください](#日本語)。
 
-[![Build Status](https://travis-ci.com/dakc/majidai.svg?branch=develop)](https://travis-ci.com/dakc/majidai)
+[![Build Status](https://travis-ci.com/dakc/majidai.svg?branch=master)](https://travis-ci.com/dakc/majidai)
 [![npm](https://img.shields.io/npm/v/majidai.svg)](https://www.npmjs.com/package/majidai) 
 [![GitHub license](https://img.shields.io/github/license/dakc/majidai.svg?style=popout)](https://github.com/dakc/majidai/blob/master/LICENSE) 
 
@@ -166,8 +167,9 @@ The first argument should be an object having following format
 # 日本語
 nodejs用のシンプルかつ軽量なWebフレームワークです。  
 NODEの標準環境で動作するため、ほかのライブラリーが不要です。  
-50KB以下ですのでとても軽いです(npm経由でインストールした場合)。
-コンフィグベースのフレームワークです。コンフィグにパラメータを設定するだけで簡単にhttps(http2含む)サーバーを作れます。
+50KB以下ですのでとても軽いです。
+コンフィグベースのフレームワークです。コンフィグにパラメータを設定するだけで簡単にhttpsサーバーを作れます。
+同様にhttp2パラメーターをTrueにする事でhttp2サーバーも作れます。
 #### インストール
 ```
 npm install majidai
