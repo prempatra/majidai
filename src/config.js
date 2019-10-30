@@ -16,14 +16,15 @@ module.exports = class Config{
             "x-frame-options": "SAMEORIGIN",
             "x-xss-protection": "1; mode=block",
             "server": "majidai@1.0",
-            "Access-Control-Allow-Origin":"*",
+            "Access-Control-Allow-Origin": "*",
+            "Accept": "*/*",
         };
         this.allowedMthod = ["GET", "POST"];
         this.allowedContentType = ["application/x-www-form-urlencoded", "application/json", "multipart/form-data"];
 
         this.session = {
             isActivate: true,
-            timeOut: 1000 * 60 * 5, // miliseconds
+            timeOut: 1000 * 60 * 30, // 31800000 miliseconds = 30 mins
         };
 
         this.log = {
